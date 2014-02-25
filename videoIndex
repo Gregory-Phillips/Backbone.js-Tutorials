@@ -83,9 +83,9 @@
                 <input type="text" name="lastname" />
             <label>Age</label>
                 <input type="text" name="age" />
-        </form>
         <hr />
         <button type="submit" class="btn">Create</button>
+        </form>
     </script>
 
 <!--/* Backbone.js functions */-->
@@ -132,7 +132,6 @@
             var user = new User();
             user.save(userDetails, {
                 success: function (user) {
-                    success: function (user) {
                         router.navigate('', {trigger: true});
                 }
             })
