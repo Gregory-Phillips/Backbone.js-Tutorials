@@ -67,7 +67,7 @@
                     <td><%= user.get('firstname') %></td>
                     <td><%= user.get('lastname') %></td>
                     <td><%= user.get('age') %></td>
-                    <td></td>
+                    <td><a href="#/edit <%= user.id %>" class="btn">Edit</a></td>
                 </tr>
                 <% }); %>
             </tbody>
@@ -121,9 +121,28 @@
 
     var EditUser = Backbone.View.extend ({
         el: '.page',
-        render: function () {
-            var template = _.template($('#edit-user-template').html(), {});
-            this.$el.html(template);
+        render: function (options) {
+                <!--/* To keep scope of the view that/this */-->
+            var that = this;
+                <!--/* GET request to grab details */-->
+            if(options.id) {
+                <!--/* Create user and grab server id from options and apply it to new User */-->
+                var user = new User({id: options.id});
+                <!--/* GET /user and id of user */-->
+                user.fetch({
+                    <!--/* Render template and also pull user id that was returned from server */-->
+                    success: function(user) {
+                    <!--/* Need to pass in user as a variable */-->
+                        var template = _.template($('#edit-user-template').html(), {user: user});
+                        that.$el.html(template);
+                    }
+                })
+            } else {
+                <!--/* Render normal template if no user details are present*/-->
+            var template = _.template($('#edit-user-template').html(), {user: null});
+                    this.$el.html(template);
+            }
+            
         },
         events: {
             'submit .edit-user-form': 'saveUser'
@@ -145,7 +164,8 @@
     var Router = Backbone.Router.extend ({
         routes: {
             '': 'home',
-            'new': 'editUser'
+            'new': 'editUser',
+            'edit/id': 'editUser'
         }
     });
     <!--/* Render user list */-->
@@ -153,8 +173,8 @@
     router.on('route:home', function () {
         userList.render();  
     });
-    router.on('route:editUser', function () {
-        editUser.render();
+    router.on('route:editUser', function (id) {
+        editUser.render(id: id);
     });
 
     Backbone.history.start();
